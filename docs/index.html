@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FARS Dashboard · 金融计量自动化研究系统</title>
+<meta name="description" content="FARS Dashboard —— 本地运行的八段式实证论文工作台。有真实产物才允许往下写。">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000'/><text y='23' x='4' font-size='20' fill='%23ff5a1f' font-family='monospace' font-weight='700'>F</text></svg>">
+<style>
+:root{
+  --bg:#0a0b0d; --panel:#111317; --panel2:#16191e;
+  --ink:#f2f3f5; --ink2:rgba(242,243,245,.72); --ink3:rgba(242,243,245,.58); --ink4:rgba(242,243,245,.40);
+  --hot:#ff5a1f; --hot2:#ff8a4f; --hair:1px solid rgba(242,243,245,.12);
+  --mono:"JetBrains Mono Variable","JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--ink);font:15px/1.7 var(--mono);
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--hot2);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+/* ---------- top ---------- */
+header{
+  border-bottom:var(--hair);position:sticky;top:0;z-index:50;
+  background:rgba(10,11,13,.88);backdrop-filter:blur(12px);
+}
+.top{display:flex;align-items:center;gap:18px;height:58px}
+.brand{font-weight:700;letter-spacing:.16em;font-size:13px}
+.brand em{font-style:normal;color:var(--hot)}
+.top nav{display:flex;gap:16px;margin-left:auto;font-size:12.5px}
+.top nav a{color:var(--ink3)}
+.top nav a:hover{color:var(--hot);text-decoration:none}
+
+/* ---------- hero ---------- */
+.hero{padding:76px 0 60px;position:relative;overflow:hidden}
+.hero::before{
+  content:"";position:absolute;inset:-40% 0 auto;height:420px;pointer-events:none;
+  background:radial-gradient(60% 60% at 50% 40%,rgba(255,90,31,.16),transparent 70%);
+}
+.hero .kicker{
+  font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--hot);
+  margin-bottom:18px;display:inline-block;border:1px solid rgba(255,90,31,.4);
+  padding:4px 10px;border-radius:3px;
+}
+.hero h1{
+  margin:0 0 20px;font-size:clamp(30px,5.2vw,52px);line-height:1.15;
+  letter-spacing:-.01em;font-weight:700;
+}
+.hero h1 span{color:var(--hot)}
+.hero p.lead{
+  font-size:16px;color:var(--ink2);max-width:700px;margin:0 0 30px;line-height:1.85;
+}
+.hero p.lead b{color:var(--ink);font-weight:600}
+.cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:4px;
+  border:1px solid var(--hair);color:var(--ink);font-size:13px;font-weight:600;
+  transition:.16s;
+}
+.btn:hover{border-color:var(--hot);color:var(--hot);text-decoration:none;transform:translateY(-1px)}
+.btn.primary{background:var(--hot);border-color:var(--hot);color:#150a04}
+.btn.primary:hover{background:var(--hot2);border-color:var(--hot2);color:#150a04}
+.btn .ic{font-size:14px}
+.meta{color:var(--ink4);font-size:11.5px;margin-top:16px}
+
+/* ---------- section ---------- */
+section{padding:64px 0;border-top:var(--hair)}
+.sec-head{margin-bottom:34px}
+.sec-head h2{
+  margin:0 0 10px;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--hot);
+}
+.sec-head p{margin:0;color:var(--ink3);font-size:13.5px;max-width:760px}
+
+/* ---------- feature grid ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:1px;background:var(--hair);border:1px solid var(--hair)}
+.card{background:var(--panel);padding:24px 22px;transition:.16s}
+.card:hover{background:var(--panel2)}
+.card h3{margin:0 0 9px;font-size:14px;color:var(--ink);display:flex;align-items:center;gap:9px}
+.card h3 .n{color:var(--hot);font-size:11px;opacity:.85}
+.card p{margin:0;font-size:12.5px;color:var(--ink3);line-height:1.8}
+
+/* ---------- shots ---------- */
+.shot{margin:0 0 30px;border:1px solid var(--hair);border-radius:5px;overflow:hidden;background:var(--panel)}
+.shot img{width:100%;display:block}
+.shot figcaption{
+  padding:11px 16px;font-size:11.5px;color:var(--ink3);border-top:var(--hair);
+  display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:var(--panel);
+}
+.shot figcaption b{color:var(--ink2);font-weight:600}
+.shot figcaption .tag{
+  font-size:10px;color:var(--hot);border:1px solid rgba(255,90,31,.35);
+  padding:1px 6px;border-radius:2px;letter-spacing:.05em;
+}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:860px){.two{grid-template-columns:1fr}}
+
+/* ---------- flow ---------- */
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--hair);border:1px solid var(--hair)}
+.step{background:var(--panel);padding:20px 16px;text-align:center}
+.step .i{font-size:10px;color:var(--hot);letter-spacing:.16em;display:block;margin-bottom:8px}
+.step .t{font-size:12.5px;color:var(--ink2);font-weight:600}
+.step .d{font-size:10.5px;color:var(--ink4);margin-top:5px;line-height:1.6}
+
+/* ---------- feature table ---------- */
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{text-align:left;padding:11px 14px;border-bottom:var(--hair)}
+th{color:var(--hot);font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;background:var(--panel)}
+td{color:var(--ink3)}
+td:first-child{color:var(--ink2);font-weight:600;white-space:nowrap}
+tbody tr:hover{background:rgba(255,255,255,.03)}
+
+/* ---------- download ---------- */
+.dl{border:1px solid var(--hair);background:var(--panel);padding:28px}
+.dl-row{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.dl-row .f{font-size:13px;color:var(--ink);font-weight:600}
+.dl-row .s{font-size:11px;color:var(--ink4);margin-top:3px}
+.notice{
+  border-left:2px solid var(--hot);padding:12px 16px;background:rgba(255,90,31,.06);
+  font-size:12px;color:var(--ink3);line-height:1.85;margin-top:20px;
+}
+.notice b{color:var(--ink2)}
+
+/* ---------- footer ---------- */
+footer{border-top:var(--hair);padding:34px 0;color:var(--ink4);font-size:11.5px}
+footer .row{display:flex;gap:20px;flex-wrap:wrap;align-items:center}
+footer .sp{flex:1}
+.badge{display:inline-block;font-size:10px;color:var(--hot);border:1px solid rgba(255,90,31,.35);padding:2px 7px;border-radius:2px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap top">
+    <div class="brand">FARS<em>·</em>DASHBOARD</div>
+    <nav>
+      <a href="#features">功能</a>
+      <a href="#demo">演示</a>
+      <a href="#workflow">工作流</a>
+      <a href="#download">下载</a>
+      <a href="https://github.com/JACKYwyj/fars-dashboard">GitHub ↗</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap hero">
+  <div class="kicker">Financial Econometrics Fully Automated Research System</div>
+  <h1>八段式实证论文工作台<br><span>有真实产物，才允许往下写</span></h1>
+  <p class="lead">
+    FARS Dashboard 把「选题 → 文献 → 数据 → 方法 → 结果 → 稳健性 → 结论」的每一步
+    都挂在一条<b>可重现工作流</b>上：没有真实产物，系统不允许你推进到下一节。
+    全部计算在你的本机跑，论文与 API Key 不出本地。
+  </p>
+  <div class="cta">
+    <a class="btn primary" href="https://github.com/JACKYwyj/fars-dashboard/releases/tag/v0.995"><span class="ic">↓</span> 下载 v0.995 (macOS)</a>
+    <a class="btn" href="https://github.com/JACKYwyj/fars-dashboard"><span class="ic">⌥</span> 查看源码</a>
+  </div>
+  <div class="meta">v0.995 · macOS arm64 · 139 MB · 本地运行 · 无需账号</div>
+</div>
+
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>核心能力</h2>
+      <p>不是一个「AI 写作按钮」，而是一套带约束的研究环境 —— 每个面板里的数字都来自真实的回归结果与真实抓取的文献。</p>
+    </div>
+    <div class="grid">
+      <div class="card"><h3><span class="n">01</span>可重现工作流</h3><p>四步强制链条：备齐真实产物 → 派生大纲 → 逐节写作 → 完整性审计。缺产物就卡住，不给「跳过」的按钮。</p></div>
+      <div class="card"><h3><span class="n">02</span>FAN HUD 写作方向</h3><p>双击光球展开扇形菜单，按当前上下文给出写作方向候选，每一条都附带「依据」，来源可查。</p></div>
+      <div class="card"><h3><span class="n">03</span>选区改写</h3><p>正文里左键选词 → 松开即弹出带依据的修改建议 → 应用后当场落盘。不是伪预览。</p></div>
+      <div class="card"><h3><span class="n">04</span>实时回归预览</h3><p>因子系数 / t 值 / p 值 / 显著性一目了然，图表可拖拽调整，窗口可切换，图随参数重算。</p></div>
+      <div class="card"><h3><span class="n">05</span>注意力框</h3><p>正文里的实体框 = 真实出现位置（回归表因子名、文献作者姓）。可拖动、可双击删除该次提及。</p></div>
+      <div class="card"><h3><span class="n">06</span>知乎生态融合</h3><p>知乎热榜实时抓取，点一条直接开题；刘看山陪伴体状态与真实工作状态绑定，不做随机装饰。</p></div>
+      <div class="card"><h3><span class="n">07</span>日间 / 夜间模式</h3><p>整套 UI 双模式，对比度按 WCAG AA 数值化校验，两种模式最低 5.28:1，浅底不糊字。</p></div>
+      <div class="card"><h3><span class="n">08</span>本地优先</h3><p>论文、正文、API Key 全在本机。Key 存 macOS 钥匙串，安装包不含任何密钥与论文数据。</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="demo">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>操作演示</h2>
+      <p>以下均为<b>真实运行实例</b>截图 —— 界面为实际运行状态，知乎热榜为实时抓取的真实数据。</p>
+    </div>
+
+    <figure class="shot">
+      <img src="img/02_workbench_dark.jpg" alt="FARS Dashboard 夜间模式工作台">
+      <figcaption><span class="tag">主界面</span><b>夜间模式 · 工作台</b>左任务列表 / 中正文八段 / 右参数操作台 / 最右独立栏</figcaption>
+    </figure>
+
+    <figure class="shot">
+      <img src="img/03_workbench_light.jpg" alt="FARS Dashboard 日间模式工作台">
+      <figcaption><span class="tag">日间模式</span><b>日间模式</b>顶栏一键切换，所有面板对比度按 WCAG AA 校验</figcaption>
+    </figure>
+
+    <div class="two">
+      <figure class="shot">
+        <img src="img/04_farcol.jpg" alt="最右栏：刘看山工位与知乎热榜接入位">
+        <figcaption><span class="tag">最右栏</span><b>知乎热榜接入位 + 刘看山工位</b></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/05_rightcol.jpg" alt="右侧参数操作台">
+        <figcaption><span class="tag">操作台</span><b>右侧参数操作台</b>规格编辑器 / 回归预览 / 文献 / 审计</figcaption>
+      </figure>
+    </div>
+
+    <figure class="shot">
+      <img src="img/01_home_light.jpg" alt="FARS Dashboard 首屏">
+      <figcaption><span class="tag">首屏</span><b>启动后的首屏工作台</b>未选择任务时的引导状态</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="workflow">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>论文八段结构</h2>
+      <p>每一节独立状态、独立审计、独立可追溯。这是实证论文的骨架，也是 FARS 的工作单元。</p>
+    </div>
+    <div class="flow">
+      <div class="step"><span class="i">01</span><div class="t">摘要</div><div class="d">整篇方向</div></div>
+      <div class="step"><span class="i">02</span><div class="t">引言</div><div class="d">问题与贡献</div></div>
+      <div class="step"><span class="i">03</span><div class="t">文献</div><div class="d">真实来源</div></div>
+      <div class="step"><span class="i">04</span><div class="t">数据</div><div class="d">样本与变量</div></div>
+      <div class="step"><span class="i">05</span><div class="t">方法</div><div class="d">模型设定</div></div>
+      <div class="step"><span class="i">06</span><div class="t">结果</div><div class="d">回归表</div></div>
+      <div class="step"><span class="i">07</span><div class="t">稳健性</div><div class="d">证伪检验</div></div>
+      <div class="step"><span class="i">08</span><div class="t">结论</div><div class="d">局限与展望</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><h2>技术细节</h2></div>
+    <table>
+      <thead><tr><th>项目</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>运行时</td><td>Python 3.9+ / macOS arm64，也可从源码在 Linux 运行</td></tr>
+        <tr><td>前端</td><td>单文件 index.html（12k+ 行），零构建、零依赖、离线可用</td></tr>
+        <tr><td>统计栈</td><td>numpy · pandas · statsmodels · scipy</td></tr>
+        <tr><td>文档解析</td><td>python-docx（docx）· pypdf / PyMuPDF（pdf）</td></tr>
+        <tr><td>打包</td><td>PyInstaller onefile，启动约 12 秒（需解压运行时）</td></tr>
+        <tr><td>数据位置</td><td>~/Library/Application Support/FARS Dashboard/</td></tr>
+        <tr><td>密钥存放</td><td>macOS 钥匙串 —— 不写代码、不写配置、不进仓库</td></tr>
+        <tr><td>对比度</td><td>双主题 WCAG AA，最低 5.28:1（数值化校验，非肉眼判断）</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="download">
+  <div class="wrap">
+    <div class="sec-head"><h2>下载</h2></div>
+    <div class="dl">
+      <div class="dl-row">
+        <div style="flex:1">
+          <div class="f">FARS Dashboard v0.995</div>
+          <div class="s">macOS arm64 · 139 MB · 含演示数据</div>
+        </div>
+        <a class="btn primary" href="https://github.com/JACKYwyj/fars-dashboard/releases/tag/v0.995"><span class="ic">↓</span> 下载 ZIP</a>
+        <a class="btn" href="https://github.com/JACKYwyj/fars-dashboard/releases/tag/v0.995"><span class="ic">▤</span> 全部版本</a>
+      </div>
+      <div class="notice">
+        <b>安装：</b>解压得到 <code>FARS Dashboard.app</code> → 双击启动（约 12 秒）→ 浏览器自动打开工作台。
+        首次运行若被 macOS 拦截，右键 → 打开。<br>
+        <b>配置：</b>顶栏 ⚙ 设置里填 API Key（或设环境变量 <code>MINIMAX_API_KEY</code>），Key 存 macOS 钥匙串。<br>
+        <b>数据：</b>导入的论文、正文、Key <b>只在你本机</b>，不上传任何地方。安装包不含密钥、不含任何论文数据。
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap row">
+    <span class="badge">禁止商用</span>
+    <span>仅供个人学习与学术研究使用 · 未经授权禁止二次开发后商业销售</span>
+    <span class="sp"></span>
+    <span>FARS Dashboard v0.995 · <a href="https://github.com/JACKYwyj/fars-dashboard">GitHub</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,22 @@
+# FARS Dashboard 运行依赖
+# 安装：pip install -r requirements.txt
+#
+# 注意：这些依赖只用于**本地运行**（server.py）。
+# macOS 应用包已用 PyInstaller 打包，终端用户不需要装这些。
+
+# —— Web 服务（标准库，无需安装）——
+# http.server / socketserver / json / urllib …
+
+# —— 数据与统计 ——
+numpy>=1.24
+pandas>=2.0
+statsmodels>=0.14
+scipy>=1.10
+
+# —— 文档解析 ——
+python-docx>=1.1        # .docx 导入导出
+pypdf>=4.0              # .pdf 导入
+PyMuPDF>=1.23           # .pdf 渲染与提取（更稳）
+
+# —— 打包（仅开发/发版时需要）——
+# pyinstaller>=6.0

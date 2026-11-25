@@ -1348,6 +1348,227 @@ def llm_call(system, user, stream=False, max_tokens=None, temperature=None,
     return txt
 
 
+
+# ============================================================
+# 刘看山研究建议（2026-11-25）
+# ------------------------------------------------------------
+# 输入：知乎热榜（真实抓取）+ 当前论文上下文（真实状态）
+# 输出：结构化研究建议，每条带可检验假设 / 变量 / 数据源
+#
+# ⚠️ 设计原则（和 FARS 其他面板一致）：
+#   · 只从**热榜原文**和**真实论文上下文**出发，不编造
+#   · 每条建议必须能落到「下一步做什么」，不能只是空话
+#   · 抓不到 / 没 Key → 返回明确的降级说明 + 用户可执行的下一步
+# ============================================================
+
+KSN_ADVICE_SYSTEM = """你是一位资深金融经济学研究助理，服务于金融计量研究系统 FARS。
+用户正在写一篇实证论文，需要基于给定的【知乎热榜真实条目】和【当前论文上下文】，
+产出可立即动手的研究建议。
+
+硬性要求：
+1. 只使用给定材料中的信息，**不要编造**文献名、数据源名称、变量定义。
+2. 每条建议必须包含：可检验的假设、涉及变量、可用数据源、验证方法。
+3. 建议要具体到能马上开一个回归，不能是"可以进一步研究"这类空话。
+4. 用中文，术语准确，语气务实。
+5. 严格输出 JSON，不要任何额外文字。
+
+输出格式（必须严格遵守）：
+{"advices":[{"title":"一句话说明研究什么","why":"为什么值得做（结合热榜与论文上下文）",
+"hypothesis":"可检验的假设（写成 H1: ... 的形式）",
+"variables":["变量1","变量2"],"data":"可用数据源","test":"怎么检验（回归设定）",
+"difficulty":"低|中|高"}],"summary":"对当前论文的一句话总体建议"}"""
+
+KSN_ADVICE_SYSTEM_FALLBACK = """你是一位研究助理。基于【热榜条目】和【论文上下文】，
+给出 2-3 条具体的金融计量研究建议。每条包含：研究什么、为什么、可检验假设、变量、数据源、怎么检验。
+用中文。直接输出 JSON：
+{"advices":[{"title":"","why":"","hypothesis":"H1: ","variables":[],"data":"","test":"","difficulty":"低"}],"summary":""}"""
+
+
+def _ksn_extract_json(txt):
+    """从模型输出里抠出 JSON（模型常带 ```json 围栏或前后废话）。"""
+    if not txt:
+        return None
+    txt = txt.strip()
+    m = re.search(r"```(?:json)?\s*(.+?)```", txt, re.S)
+    if m:
+        txt = m.group(1).strip()
+    # 直接试整体
+    for cand in (txt,):
+        try:
+            return json.loads(cand)
+        except Exception:
+            pass
+    # 找第一个 { ... } 平衡片段
+    start = txt.find("{")
+    if start < 0:
+        return None
+    depth = 0
+    for i in range(start, len(txt)):
+        if txt[i] == "{":
+            depth += 1
+        elif txt[i] == "}":
+            depth -= 1
+            if depth == 0:
+                try:
+                    return json.loads(txt[start:i + 1])
+                except Exception:
+                    break
+    # ⚠️ 走到这说明输出被 max_tokens **截断**了（模型没说完，JSON 不完整）。
+    #   实测踩过：1877 字处断在 "summary":"先用 → 整体 json.loads 失败 → 建议全丢。
+    #   → 降级：逐条抢救 —— 把 advices 数组里**每个完整对象**单独抠出来解析。
+    out = []
+    arr_start = txt.find('"advices"')
+    if arr_start >= 0:
+        arr_start = txt.find("[", arr_start)
+        if arr_start >= 0:
+            depth = 0
+            obj_start = None
+            i = arr_start
+            while i < len(txt):
+                ch = txt[i]
+                if ch == "{":
+                    if depth == 0:
+                        obj_start = i
+                    depth += 1
+                elif ch == "}":
+                    depth -= 1
+                    if depth == 0 and obj_start is not None:
+                        try:
+                            o = json.loads(txt[obj_start:i + 1])
+                            if isinstance(o, dict):
+                                out.append(o)
+                        except Exception:
+                            pass
+                        obj_start = None
+                elif ch == "]":
+                    break
+                i += 1
+    if out:
+        # summary 可能也被截断 → 尝试抢救，不强求
+        summ = ""
+        m = re.search(r'"summary"\s*:\s*"(.*?)"', txt, re.S)
+        if m:
+            summ = m.group(1)
+        return {"advices": out, "summary": summ}
+    return None
+
+
+def _ksn_paper_context(code, topic):
+    """取当前论文的真实上下文（有就取，没有就明确说没有）。"""
+    if not code:
+        return "（当前未选中论文）"
+    try:
+        d = load_paper(code, topic)
+    except Exception:
+        return "（论文 %s/%s 读取失败）" % (code, topic)
+    if not d:
+        return "（当前未选中论文）"
+    parts = d.get("parts") or {}
+    spec = effective_spec(code, topic) or {}
+    bits = []
+    title = (d.get("title") or "").strip()
+    if title:
+        bits.append("标题：%s" % title)
+    # 哪几节写了
+    written = []
+    for k, v in parts.items():
+        t = (v or {}).get("text") or ""
+        if len(t.strip()) > 40:
+            written.append("%s(%d字)" % (k, len(t)))
+    if written:
+        bits.append("已写章节：" + "、".join(written))
+    else:
+        bits.append("已写章节：无")
+    # 当前规格
+    try:
+        cur = spec.get("spec") or spec
+        if isinstance(cur, dict):
+            if cur.get("horizon"):
+                bits.append("当前预测期：%s" % cur["horizon"])
+            fams = cur.get("factors") or cur.get("family") or []
+            if fams:
+                bits.append("当前因子：%s" % "、".join(str(x) for x in fams))
+    except Exception:
+        pass
+    return "；".join(bits) if bits else "（上下文为空）"
+
+
+def ksn_advise(code=None, topic=None, limit=6):
+    """生成研究建议。返回 (result_dict, http_status)。
+
+    result_dict:
+      {ok: bool, advices: [...], summary: str, source: str, fallback: str|None}
+    """
+    # —— 1) 热榜（真实抓取）——
+    try:
+        items, warnings = zhihu_hot_list(limit=20)
+    except Exception as e:
+        items, warnings = [], [str(e)]
+    hot_lines = []
+    for it in (items or [])[:12]:
+        hot_lines.append("%s. %s（热度 %s）%s" % (
+            it.get("rank", "?"), (it.get("title") or "").strip(),
+            it.get("heat") or "-", (it.get("excerpt") or "").strip()[:80]))
+    hot_text = "\n".join(hot_lines) if hot_lines else "（本轮未取到知乎热榜）"
+
+    ctx = _ksn_paper_context(code, topic)
+
+    user = ("【知乎热榜真实条目】\n%s\n\n"
+            "【当前论文上下文】\n%s\n\n"
+            "请基于以上材料，给出最多 %d 条研究建议。" % (hot_text, ctx, max(1, min(6, int(limit or 6)))))
+
+    # —— 2) 调模型 ——
+    try:
+        txt = llm_call(KSN_ADVICE_SYSTEM, user, max_tokens=4000, temperature=0.4)
+    except Exception as e:
+        # 降级：没配 Key / 网络失败 → 给可执行的下一步，不空手而归
+        msg = str(e)
+        step = ("去「设置」填 API Key 后再点一次" if "Key" in msg
+                else "检查网络或稍后重试（模型调用失败：%s）" % msg[:80])
+        return {"ok": False, "advices": [], "summary": "",
+                "source": "hot", "fallback": step,
+                "hotCount": len(items or [])}, 200
+
+    data = _ksn_extract_json(txt)
+    if not isinstance(data, dict) or not isinstance(data.get("advices"), list):
+        # 模型没给合法 JSON → 再宽松试一次
+        try:
+            txt2 = llm_call(KSN_ADVICE_SYSTEM_FALLBACK, user,
+                             max_tokens=3000, temperature=0.3)
+            data = _ksn_extract_json(txt2)
+        except Exception:
+            data = None
+    if not isinstance(data, dict) or not isinstance(data.get("advices"), list):
+        return {"ok": False, "advices": [], "summary": "",
+                "source": "hot", "fallback": "模型输出无法解析为建议（已重试一次）",
+                "hotCount": len(items or [])}, 200
+
+    # —— 3) 清洗（字段缺失会前端崩）——
+    out = []
+    for a in data["advices"][:6]:
+        if not isinstance(a, dict):
+            continue
+        vars_ = a.get("variables")
+        if isinstance(vars_, str):
+            vars_ = [vars_]
+        if not isinstance(vars_, list):
+            vars_ = []
+        out.append({
+            "title": str(a.get("title") or "").strip()[:120],
+            "why": str(a.get("why") or "").strip()[:400],
+            "hypothesis": str(a.get("hypothesis") or "").strip()[:240],
+            "variables": [str(v).strip()[:40] for v in vars_ if str(v).strip()][:8],
+            "data": str(a.get("data") or "").strip()[:200],
+            "test": str(a.get("test") or "").strip()[:300],
+            "difficulty": (str(a.get("difficulty") or "中").strip()[:4] or "中"),
+        })
+    out = [o for o in out if o["title"]]
+    return {"ok": True, "advices": out,
+            "summary": str(data.get("summary") or "").strip()[:300],
+            "source": "hot", "fallback": None,
+            "hotCount": len(items or [])}, 200
+
+
 def load_filemeta():
     d = load_json(FILEMETA_FILE, {})
     if not isinstance(d, dict):
@@ -7923,6 +8144,17 @@ class Handler(BaseHTTPRequestHandler):
                     save_paper(d)
                     return self._json({"ok": True, "audit": ar, "paper": d})
 
+            if path == "/api/ksn/advise":
+                code = body.get("code")
+                topic = body.get("topic")
+                limit = body.get("limit") or 6
+                try:
+                    res, st = ksn_advise(code, topic, limit)
+                    return self._json(res, st)
+                except Exception as e:
+                    return self._json({"ok": False, "advices": [],
+                                       "summary": "", "fallback": str(e)[:160],
+                                       "source": "hot"}, 200)
             if path == "/api/steer":
                 code = body.get("code")
                 topic = body.get("topic")

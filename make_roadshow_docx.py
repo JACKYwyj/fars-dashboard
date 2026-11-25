@@ -21,7 +21,14 @@ from docx.oxml import OxmlElement
 
 SHOTS_DIR = "/tmp/fars_shots"
 META = "/tmp/fars_shots.json"
-OUT = "/Users/wangyunjie/Desktop/FARS Dashboard 内测版/FARS 路演产品说明计划书.docx"
+# 输出路径：**不要硬编码本机绝对路径**（会泄漏用户名，CI 也会因此失败）
+# 优先级：环境变量 FARS_DELIV_DIR > 桌面交付目录 > 当前目录
+import os as _os
+_deliv = _os.environ.get("FARS_DELIV_DIR") or _os.path.join(
+    _os.path.expanduser("~"), "Desktop", "FARS Dashboard 内测版")
+if not _os.path.isdir(_deliv):
+    _deliv = _os.getcwd()
+OUT = _os.path.join(_deliv, "FARS 路演产品说明计划书.docx")
 
 CJK = "PingFang SC"
 LATIN = "Helvetica Neue"

@@ -1,0 +1,30 @@
+# 运行时状态与本地数据（绝不入库）
+state/
+state-test/
+/data/*.npz
+/data/*.csv
+
+# 构建产物
+dist/
+.build/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# 备份与临时
+*.bak.*
+*.tmp
+.DS_Store
+
+# 密钥与本地配置
+.env
+.env.*
+config/settings.json
+config/settings.local.json
+*.pem
+*.key
+
+# 编辑器
+.idea/
+.vscode/

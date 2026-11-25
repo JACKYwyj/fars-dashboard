@@ -1,0 +1,81 @@
+{
+  "code": "DEMO01",
+  "topic": "ESG",
+  "title": "示例论文：机器学习与动量效应（演示数据）",
+  "abstract": "本文演示看板的写作功能。数据均为虚构，仅用于展示界面与交互。",
+  "abstractAuto": "本文演示看板的写作功能。数据均为虚构，仅用于展示界面与交互。",
+  "abstractDirty": false,
+  "direction": "演示用论文",
+  "directionCandidates": [],
+  "parts": {
+    "abstract": {
+      "status": "generated",
+      "text": "本文演示看板的写作功能。数据均为虚构，仅用于展示界面与交互。",
+      "updatedAt": 1795370691874
+    },
+    "intro": {
+      "status": "generated",
+      "text": "动量效应是资产定价文献中最稳健的异象之一。然而既有研究大多依赖线性设定，难以刻画变量之间的非线性交互。\n\n本文尝试将机器学习方法引入动量效应的预测研究，考察非线性结构是否带来增量预测力。文中所有数值均为演示用虚构数据，不代表任何真实研究结论。",
+      "updatedAt": 1795370691874
+    },
+    "lit": {
+      "status": "placeholder",
+      "text": "Guo, Kim & Xing (2020) 展示了深度网络在截面收益预测中的优势，为本文的方法选择提供了参考。\n\n（此处为演示占位文本。）",
+      "updatedAt": 1795370691874
+    },
+    "data": {
+      "status": "placeholder",
+      "text": "演示数据：月度收益、换手率与财务因子，样本区间 2010–2023。",
+      "updatedAt": 1795370691874
+    },
+    "method": {
+      "status": "placeholder",
+      "text": "演示方法：以滞后收益构造动量因子，以机器学习模型拟合截面收益。",
+      "updatedAt": 1795370691874
+    },
+    "results": {
+      "status": "placeholder",
+      "text": "演示结果：基准设定下模型拟合优度有所提升。",
+      "updatedAt": 1795370691874
+    },
+    "robust": {
+      "status": "placeholder",
+      "text": "演示稳健性：分样本检验后结论方向不变。",
+      "updatedAt": 1795370691874
+    },
+    "conclusion": {
+      "status": "placeholder",
+      "text": "演示结论：机器学习在演示数据上表现出增量预测力。",
+      "updatedAt": 1795370691874
+    }
+  },
+  "refs": [
+    {
+      "title": "Guo, Kim & Xing (2020). A Deeper Look at the Role of Neural Networks in Asset Pricing. Working Paper.",
+      "url": "",
+      "tag": "demo"
+    },
+    {
+      "title": "示例文献占位。",
+      "url": "",
+      "tag": "demo"
+    }
+  ],
+  "tables": [],
+  "figures": [],
+  "compute": {},
+  "progress": {
+    "abstract": true,
+    "intro": true,
+    "lit": true,
+    "data": true,
+    "method": true,
+    "results": true,
+    "robust": true,
+    "conclusion": true
+  },
+  "updatedAt": 1795370691874,
+  "strength": "中等",
+  "tone": "严谨客观",
+  "style": "详尽展开"
+}

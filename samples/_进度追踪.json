@@ -1,0 +1,15 @@
+[
+  {
+    "code": "DEMO01",
+    "topic": "ESG",
+    "title": "示例论文：机器学习与动量效应（演示数据）",
+    "dir": "DEMO01_ESG",
+    "status": "completed",
+    "note": "演示用，全部数据为虚构",
+    "phase": {
+      "stage": "已完成",
+      "done": 5,
+      "total": 5
+    }
+  }
+]

@@ -1574,6 +1574,119 @@ button.act.theme-btn{
   display:inline-flex;align-items:center;gap:5px;
 }
 .theme-btn .t-ico{font-size:11px;line-height:1}
+
+
+/* ============================================================
+   刘看山宠物系统（2026-11-25）
+   ------------------------------------------------------------
+   养成维度：饱食 / 心情 / 亲密，随时间衰减 → 必须自己照顾
+   ⚠️ 工位舞台固定深底（看山是浅灰线稿），宠物条也用深色系，
+      不随主题变 —— 否则日间模式下看山就消失了。
+   ============================================================ */
+.pet-bar{
+  display:flex;align-items:center;gap:10px;padding:7px 9px;margin:2px 0 0;
+  border:1px solid rgba(255,255,255,.10);border-radius:5px;
+  background:linear-gradient(180deg,#1b1e24,#111419);
+}
+.pet-level{display:flex;align-items:center;gap:5px;flex:0 0 auto}
+.pl-badge{
+  font-size:9px;font-weight:700;color:#150a04;background:var(--hot);
+  padding:2px 5px;border-radius:3px;letter-spacing:.04em;
+}
+.pl-name{font-size:10px;color:rgba(255,255,255,.82);white-space:nowrap}
+.pet-gauges{flex:1;display:flex;gap:7px;min-width:0}
+.pg{display:flex;align-items:center;gap:4px;flex:1;min-width:0}
+.pg-ico{font-size:9px;color:rgba(255,255,255,.50);flex:0 0 auto}
+.pg-bar{
+  flex:1;height:4px;border-radius:3px;background:rgba(255,255,255,.13);
+  overflow:hidden;min-width:0;
+}
+.pg-bar i{display:block;height:100%;border-radius:3px;transition:width .5s ease}
+#petFoodBar{background:linear-gradient(90deg,#ffb469,#ff8a3d)}
+#petMoodBar{background:linear-gradient(90deg,#7ad3a0,#4ade80)}
+#petBondBar{background:linear-gradient(90deg,#ff8fb0,#ff5a8f)}
+.pet-acts{display:flex;gap:4px;flex:0 0 auto}
+.pact{
+  font-size:10px;padding:3px 8px;border-radius:3px;cursor:pointer;
+  border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);
+  color:rgba(255,255,255,.82);font-family:inherit;transition:.14s;
+}
+.pact:hover{background:rgba(255,90,31,.22);border-color:rgba(255,90,31,.5);color:#fff}
+.pact:active{transform:scale(.94)}
+.pact:disabled{opacity:.4;cursor:not-allowed}
+.pet-talk{
+  min-height:16px;padding:5px 9px 0;font-size:10px;line-height:1.5;
+  color:var(--ink-3);font-style:italic;
+}
+.pet-talk b{color:var(--hot);font-style:normal}
+
+/* ---- 研究建议面板 ---- */
+.adv-actions{
+  display:flex;align-items:center;gap:9px;padding:2px 0 8px;
+}
+.btn-adv{
+  display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:4px;
+  border:1px solid var(--hot);background:var(--hot);color:var(--on-hot);
+  font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:.14s;
+}
+.btn-adv:hover{background:var(--hot2,#ff8a4f);border-color:var(--hot2,#ff8a4f);color:#150a04}
+.btn-adv:disabled{opacity:.55;cursor:progress}
+.ba-ico{font-size:11px}
+.adv-src{font-size:9.5px;color:var(--ink-4)}
+.adv-empty{
+  font-size:10.5px;line-height:1.75;color:var(--ink-4);padding:10px 12px;
+  border:1px dashed var(--ink-5);border-radius:4px;background:rgba(var(--ov),.015);
+}
+.adv-empty b{color:var(--ink-3)}
+.adv-item{
+  border:1px solid var(--hair);border-radius:4px;padding:10px 12px;margin-bottom:8px;
+  background:var(--panel-2);transition:.14s;
+}
+.adv-item:hover{border-color:rgba(255,90,31,.4)}
+.adv-head{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
+.adv-title{flex:1;font-size:11.5px;font-weight:600;color:var(--ink);line-height:1.5}
+.adv-diff{
+  font-size:9px;padding:1px 5px;border-radius:2px;flex:0 0 auto;
+  border:1px solid var(--ink-4);color:var(--ink-2);white-space:nowrap;
+  background:var(--panel);
+}
+.adv-diff[data-d="低"]{color:var(--ok);border-color:var(--ok)}
+.adv-diff[data-d="中"]{color:var(--hot);border-color:var(--hot)}
+.adv-diff[data-d="高"]{color:var(--danger-ink);border-color:var(--danger-ink)}
+.adv-row{font-size:10.5px;line-height:1.7;color:var(--ink-3);margin-bottom:3px}
+.adv-row .k{
+  color:var(--ink-4);display:inline-block;min-width:52px;flex:0 0 auto;
+}
+.adv-row .v{color:var(--ink-2)}
+.adv-hyp{
+  font-size:10.5px;line-height:1.65;color:var(--ink-2);padding:5px 8px;margin:5px 0;
+  border-left:2px solid var(--hot);background:rgba(255,90,31,.06);border-radius:0 3px 3px 0;
+}
+.adv-vars{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}
+.adv-var{
+  font-size:9.5px;padding:1px 6px;border-radius:3px;
+  background:rgba(var(--ov),.07);border:1px solid var(--ink-4);color:var(--ink-2);
+}
+.adv-foot{display:flex;align-items:center;gap:8px;margin-top:7px}
+.adv-take{
+  font-size:10px;padding:3px 10px;border-radius:3px;cursor:pointer;font-family:inherit;
+  border:1px solid var(--hot);background:transparent;color:var(--hot);transition:.14s;
+}
+.adv-take:hover{background:var(--hot);color:var(--on-hot)}
+.adv-summary{
+  font-size:10.5px;line-height:1.75;color:var(--ink-2);padding:8px 11px;margin-bottom:9px;
+  border:1px solid var(--hair);border-radius:4px;background:rgba(255,90,31,.05);
+}
+.adv-summary b{color:var(--hot)}
+.adv-fallback{
+  font-size:10.5px;line-height:1.7;color:var(--ink-3);padding:9px 11px;
+  border:1px solid rgba(255,180,105,.35);border-radius:4px;background:rgba(255,180,105,.07);
+}
+.adv-fallback b{color:#ffb469}
+.adv-loading{
+  font-size:10.5px;color:var(--ink-4);padding:10px 12px;
+  border:1px dashed var(--ink-5);border-radius:4px;
+}
 </style>
 </head>
 <body>
@@ -2095,8 +2208,56 @@ button.act.theme-btn{
           <span class="dp-state" id="ksnDeskState">待机</span>
         </div>
       </div>
+
+      <!-- 宠物养成条 -->
+      <div class="pet-bar" id="petBar">
+        <div class="pet-level">
+          <span class="pl-badge" id="petLevel">Lv.1</span>
+          <span class="pl-name" id="petName">小跟屁虫</span>
+        </div>
+        <div class="pet-gauges">
+          <div class="pg" title="饱食度">
+            <span class="pg-ico">◕</span>
+            <span class="pg-bar"><i id="petFoodBar" style="width:70%"></i></span>
+          </div>
+          <div class="pg" title="心情">
+            <span class="pg-ico">☺</span>
+            <span class="pg-bar"><i id="petMoodBar" style="width:70%"></i></span>
+          </div>
+          <div class="pg" title="亲密度">
+            <span class="pg-ico">♥</span>
+            <span class="pg-bar"><i id="petBondBar" style="width:10%"></i></span>
+          </div>
+        </div>
+        <div class="pet-acts">
+          <button class="pact" id="petFeed" title="喂它（饱食 +）">喂</button>
+          <button class="pact" id="petPat" title="摸摸头（心情 +）">摸</button>
+          <button class="pact" id="petPlay" title="逗它玩（心情 + 亲密 +）">逗</button>
+        </div>
+      </div>
+      <div class="pet-talk" id="petTalk"></div>
+
       <div class="desk-hint">陪伴体状态跟真实工作状态绑定：正在生成 → 打字，
         选中文字 → 打招呼，拖拽光球 → 运球，久未操作 → 打盹。</div>
+    </div>
+
+    <!-- 研究建议面板 -->
+    <div class="sec" id="ksnAdvSec">
+      <div class="phead">
+        <h3>看山的研究建议</h3>
+        <div class="spacer"></div>
+        <span class="pstatus" id="ksnAdvStatus">未生成</span>
+      </div>
+      <div class="adv-actions">
+        <button class="btn-adv" id="btnKsnAdvise">
+          <span class="ba-ico">✦</span> 给我建议
+        </button>
+        <span class="adv-src" id="ksnAdvSrc">基于知乎热榜 + 当前论文</span>
+      </div>
+      <div id="ksnAdvList">
+        <div class="adv-empty">点「给我建议」，看山会结合
+          <b>当前知乎热榜</b>和<b>你这篇论文</b>，给出可检验的研究假设。</div>
+      </div>
     </div>
   </div>
 
@@ -12328,6 +12489,226 @@ function ksnSet(state, bubbleText){
   }
 }
 
+
+/* ============================================================
+   刘看山宠物系统（2026-11-25）
+   ------------------------------------------------------------
+   三条状态：饱食 / 心情 / 亲密
+   · 随时间衰减（每小时 -6 / -5 / -2）→ 需要偶尔照顾
+   · 互动按钮：喂 / 摸 / 逗
+   · 状态影响 GIF：饿+蔫 → sway，睡 → sleep
+   · 亲密等级：Lv1..Lv5，解锁不同称呼与语气
+   · 存 localStorage → 关掉重开还在
+   ============================================================ */
+var PET_KEY = 'fars.pet';
+var pet = {food:70, mood:70, bond:10, lastTick:0, talks:0};
+var PET_LEVELS = [
+  {min:0,  lv:1, name:'小跟屁虫', tone:'刚认识，还在观察你。'},
+  {min:30, lv:2, name:'摸鱼搭子', tone:'开始信你了。'},
+  {min:55, lv:3, name:'研究搭档', tone:'你写论文的时候它就在旁边。'},
+  {min:78, lv:4, name:'学术同门', tone:'会主动帮你想选题了。'},
+  {min:92, lv:5, name:'看山本山', tone:'什么话都敢说了。'}
+];
+
+function petLoad(){
+  try{
+    var raw = localStorage.getItem(PET_KEY);
+    if (raw){ var d = JSON.parse(raw); if (d && typeof d.food === 'number') pet = d; }
+  }catch(e){}
+  pet.lastTick = Date.now();
+}
+function petSave(){
+  try{ localStorage.setItem(PET_KEY, JSON.stringify(pet)); }catch(e){}
+}
+function petLevelOf(){
+  var cur = PET_LEVELS[0];
+  for (var i=0;i<PET_LEVELS.length;i++) if (pet.bond >= PET_LEVELS[i].min) cur = PET_LEVELS[i];
+  return cur;
+}
+function petClamp(){
+  pet.food = Math.max(0, Math.min(100, pet.food));
+  pet.mood = Math.max(0, Math.min(100, pet.mood));
+  pet.bond = Math.max(0, Math.min(100, pet.bond));
+}
+/* 时间衰减：最多补 12 小时，避免关一天回来直接归零 */
+function petDecay(){
+  var now = Date.now();
+  var hrs = (now - (pet.lastTick || now)) / 3600000;
+  if (hrs > 0){
+    var h = Math.min(hrs, 12);
+    pet.food -= h * 6;
+    pet.mood -= h * 5;
+    pet.bond += h * 1.2;      /* 相处本身也在涨亲密度 */
+    pet.lastTick = now;
+    petClamp();
+    petSave();
+  }
+}
+function petRender(){
+  var lv = petLevelOf();
+  var e;
+  if ((e = document.getElementById('petFoodBar'))) e.style.width = pet.food + '%';
+  if ((e = document.getElementById('petMoodBar'))) e.style.width = pet.mood + '%';
+  if ((e = document.getElementById('petBondBar'))) e.style.width = pet.bond + '%';
+  if ((e = document.getElementById('petLevel'))) e.textContent = 'Lv.' + lv.lv;
+  if ((e = document.getElementById('petName'))) e.textContent = lv.name;
+}
+function petSay(text, ms){
+  var t = document.getElementById('petTalk');
+  if (!t) return;
+  t.innerHTML = text;
+  if (ms) setTimeout(function(){ if (t.innerHTML === text) t.innerHTML = ''; }, ms || 6000);
+}
+/* 互动 */
+function petAct(kind){
+  petDecay();
+  var lv = petLevelOf();
+  var msg = '', state = null;
+  if (kind === 'feed'){
+    if (pet.food >= 95){ msg = '<b>'+lv.name+'</b>：吃不下了，看你写论文就好。'; }
+    else { pet.food = Math.min(100, pet.food + 25); pet.mood = Math.min(100, pet.mood + 5);
+           pet.bond = Math.min(100, pet.bond + 2);
+           msg = '<b>'+lv.name+'</b>：啊呜……谢了。继续写，我看着。'; state = 'wave'; }
+  } else if (kind === 'pat'){
+    if (pet.mood >= 95){ msg = '<b>'+lv.name+'</b>：嗯……（已经很高兴了）'; }
+    else { pet.mood = Math.min(100, pet.mood + 18); pet.bond = Math.min(100, pet.bond + 4);
+           msg = '<b>'+lv.name+'</b>：嘿嘿。'; state = 'sway'; }
+  } else if (kind === 'play'){
+    if (pet.mood < 25){ msg = '<b>'+lv.name+'</b>：没精神……先喂我一口。'; state = 'idle'; }
+    else { pet.mood = Math.min(100, pet.mood + 12);
+           pet.bond = Math.min(100, pet.bond + 8);
+           pet.food = Math.max(0, pet.food - 4);
+           msg = '<b>'+lv.name+'</b>：好玩好玩！再玩一次！'; state = 'ball'; }
+  }
+  petSave(); petRender();
+  if (state) ksnSet(state);
+  petSay(msg);
+}
+/* 低状态的「蔫」表现：心情/饱食太低时，看山会改状态 */
+function petMoodState(){
+  if (pet.food < 20) return 'sad';
+  if (pet.mood < 25) return 'sad';
+  if (pet.food < 40 || pet.mood < 40) return 'sway';
+  return null;
+}
+function petInit(){
+  petLoad(); petDecay(); petRender();
+  var f = document.getElementById('petFeed');
+  var p = document.getElementById('petPat');
+  var y = document.getElementById('petPlay');
+  if (f) f.addEventListener('click', function(){ petAct('feed'); });
+  if (p) p.addEventListener('click', function(){ petAct('pat'); });
+  if (y) y.addEventListener('click', function(){ petAct('play'); });
+  /* 每分钟刷新一次（衰减 + 心情状态） */
+  setInterval(function(){
+    petDecay(); petRender();
+    var sad = petMoodState();
+    if (sad === 'sad' && ksnState !== 'typing') ksnSet('sway');
+  }, 60000);
+  /* 状态低的开场白 */
+  var lv = petLevelOf();
+  if (pet.food < 20) petSay('<b>'+lv.name+'</b>：我饿了……（点「喂」）', 8000);
+  else if (pet.mood < 25) petSay('<b>'+lv.name+'</b>：有点提不起劲，摸摸我？', 8000);
+  else petSay('<b>'+lv.name+'</b>：'+lv.tone, 5000);
+}
+
+/* ============================================================
+   研究建议：渲染 + 生成 + 采纳
+   ============================================================ */
+var ksnAdvData = null;
+
+function ksnAdvRender(res){
+  var host = document.getElementById('ksnAdvList');
+  var st = document.getElementById('ksnAdvStatus');
+  if (!host) return;
+  ksnAdvData = res;
+  if (!res || !res.ok){
+    if (st) st.textContent = '生成失败';
+    host.innerHTML = '<div class="adv-fallback">' +
+      (res && res.fallback ? '⚠️ ' + esc(res.fallback) : '⚠️ 生成失败') +
+      '</div>';
+    return;
+  }
+  if (st) st.textContent = (res.advices || []).length + ' 条建议';
+  var h = '';
+  if (res.summary) h += '<div class="adv-summary"><b>看山说：</b>' + esc(res.summary) + '</div>';
+  (res.advices || []).forEach(function(a, i){
+    h += '<div class="adv-item">';
+    h += '<div class="adv-head"><div class="adv-title">' + esc(a.title) + '</div>' +
+         '<div class="adv-diff" data-d="' + esc(a.difficulty || '中') + '">' +
+         esc(a.difficulty || '中') + '难度</div></div>';
+    if (a.why) h += '<div class="adv-row"><span class="k">为什么</span><span class="v">' + esc(a.why) + '</span></div>';
+    if (a.hypothesis) h += '<div class="adv-hyp">' + esc(a.hypothesis) + '</div>';
+    if ((a.variables || []).length){
+      h += '<div class="adv-row"><span class="k">变量</span></div><div class="adv-vars">';
+      (a.variables || []).forEach(function(v){ h += '<span class="adv-var">' + esc(v) + '</span>'; });
+      h += '</div>';
+    }
+    if (a.data)  h += '<div class="adv-row"><span class="k">数据源</span><span class="v">' + esc(a.data) + '</span></div>';
+    if (a.test)  h += '<div class="adv-row"><span class="k">怎么检验</span><span class="v">' + esc(a.test) + '</span></div>';
+    h += '<div class="adv-foot"><button class="adv-take" data-adv="' + i + '">采纳这个方向</button>' +
+         '<span class="adv-src">开题并写入来源</span></div>';
+    h += '</div>';
+  });
+  if (!res.advices || !res.advices.length){
+    h = '<div class="adv-empty">这次没给出可用建议，换个说法再试试？</div>';
+  }
+  host.innerHTML = h;
+  /* 采纳 → 建论文骨架 */
+  host.querySelectorAll('.adv-take').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var i = parseInt(btn.getAttribute('data-adv'), 10);
+      var a = (ksnAdvData.advices || [])[i];
+      if (!a) return;
+      btn.disabled = true; btn.textContent = '开题中…';
+      var payload = {
+        title: a.title,
+        topic: ((currentSel && currentSel.topic) || (paperState && paperState.topic) || 'Stock'),
+        url: 'https://zhihu.com/hot',
+        rank: 0,
+        heat: '看山建议',
+        excerpt: [a.why, a.hypothesis, a.test].filter(Boolean).join(' / ')
+      };
+      apiPost('/api/zhihu/start', payload).then(function(j){
+        if (j && j.ok){
+          btn.textContent = '✅ 已开题';
+          petSay('<b>'+petLevelOf().name+'</b>：给你建好骨架了，去左栏看看。', 6000);
+          if (typeof refreshTasks === 'function') refreshTasks();
+          else location.reload();
+        } else {
+          btn.disabled = false; btn.textContent = '采纳这个方向';
+          petSay('<b>'+petLevelOf().name+'</b>：开题失败了，再试一次？', 5000);
+        }
+      }).catch(function(){
+        btn.disabled = false; btn.textContent = '采纳这个方向';
+      });
+    });
+  });
+}
+
+function ksnAdviseAsk(){
+  var btn = document.getElementById('btnKsnAdvise');
+  var host = document.getElementById('ksnAdvList');
+  var st = document.getElementById('ksnAdvStatus');
+  if (!btn) return;
+  btn.disabled = true;
+  if (st) st.textContent = '思考中…';
+  if (host) host.innerHTML = '<div class="adv-loading">看山正在读热榜、读你的论文，想选题……</div>';
+  ksnSet('typing');
+  var _sel = currentSel || {};
+  var body = {code: _sel.code || '', topic: _sel.topic || 'Stock', limit: 6};
+  apiPost('/api/ksn/advise', body).then(function(j){
+    btn.disabled = false;
+    ksnAdvRender(j);
+    ksnSet('wave');
+  }).catch(function(e){
+    btn.disabled = false;
+    if (st) st.textContent = '生成失败';
+    if (host) host.innerHTML = '<div class="adv-fallback">⚠️ 请求失败：' + esc(String(e && e.message || e)) + '</div>';
+    ksnSet('idle');
+  });
+}
+
 function ksnSay(text, ms){
   var b = $('ksnBubble');
   if (!b || !text) return;
@@ -12405,6 +12786,8 @@ function initKanshan(){
       mo.observe(orb, {attributes:true, attributeFilter:['data-generating','data-dragging','data-scrubbing','data-holding']});
     }
   }
+  var advBtn = document.getElementById('btnKsnAdvise');
+  if (advBtn && !advBtn._bound){ advBtn._bound = true; advBtn.addEventListener('click', ksnAdviseAsk); }
   ksnSet('idle', '我是看山，<b>知乎</b>派来的助手。左边选论文，右边选题。');
   /* 知乎热榜：延后拉取（别抢首屏） */
   setTimeout(function(){ zhLoad(); }, 1200);
@@ -12562,6 +12945,7 @@ initHand();
 bindZhihuPanel();
 themeInit();
 initKanshan();
+petInit();
 loadPaperMeta().then(function(){ renderPaper(); });
 refreshAll();
 window.setInterval(function(){ if (appState) refreshAll(); }, 20000);

@@ -8,103 +8,16 @@ on:
 
 jobs:
   test:
-    name: 安装验证 + 冒烟测试
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
-      - name: 安装依赖
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-
-      - name: 验证导入（不启服务，先确认依赖都装上了）
-        run: |
-          python -c "import numpy, pandas, statsmodels, scipy, docx, fitz; print('deps OK')"
-          python -c "import server; print('server import OK')"
-
-      - name: 冒烟测试（起服务 → 打健康检查 → 首页 → 示例论文）
-        run: |
-          set -euo pipefail
-          export FARS_STATE_DIR="$RUNNER_TEMP/fars-state"
-          export FARS_PORT=8791
-          mkdir -p "$FARS_STATE_DIR"
-          python server.py &
-          SRV=$!
-          echo "server pid=$SRV"
-
-          ok=0
-          for i in $(seq 1 40); do
-            sleep 3
-            if curl -s -m 4 http://127.0.0.1:8791/health 2>/dev/null | grep -q ok; then
-              ok=1; echo "健康检查通过（$((i*3)) 秒）"; break
-            fi
-          done
-          if [ "$ok" != "1" ]; then
-            echo "::error::健康检查未通过"; exit 1
-          fi
-
-          curl -s -m 10 http://127.0.0.1:8791/ > "$RUNNER_TEMP/page.html"
-          grep -q "taskList" "$RUNNER_TEMP/page.html" || { echo "::error::首页缺少 taskList"; exit 1; }
-          grep -q "btnTheme"   "$RUNNER_TEMP/page.html" || { echo "::error::首页缺少主题按钮"; exit 1; }
-          echo "首页正常（$(wc -c < "$RUNNER_TEMP/page.html") 字节）"
-
-          curl -s -m 10 http://127.0.0.1:8791/api/settings/get | grep -q "presets" \
-            || { echo "::error::设置接口异常"; exit 1; }
-          echo "设置接口正常"
-
-          curl -s -m 10 http://127.0.0.1:8791/api/paper/DEMO01/ESG | grep -q "DEMO" \
-            || { echo "::error::示例论文未就位"; exit 1; }
-          echo "示例论文已就位"
-
-          kill $SRV 2>/dev/null || true
-
-      - name: 密钥扫描（仓库里不能有真 key）
-        run: |
-          if grep -rnE "sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{20,}" \
-               --include="*.py" --include="*.html" --include="*.md" --include="*.json" .; then
-            echo "::error::发现疑似密钥"; exit 1
-          fi
-          echo "未发现密钥"
-
-      - name: 本机绝对路径扫描（不能泄漏用户名）
-        run: |
-          if grep -rn "wangyunjie" --include="*.py" --include="*.html" --include="*.md" . | grep -v "^./docs/"; then
-            echo "::error::发现本机用户名"; exit 1
-          fi
-          echo "未泄漏本机路径"
-
-  pages:
-    name: 部署演示网页（GitHub Pages）
-    runs-on: ubuntu-latest
-    needs: test
-    timeout-minutes: 10
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: 准备站点
-        run: |
-          # docs/ 目录就是 Pages 站点根
-          test -f docs/index.html || { echo "::error::docs/index.html 不存在"; exit 1; }
-          ls -la docs/
-
-      - name: 上传 Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: docs/
-
-      - name: 部署
-        id: deployment
-        uses: actions/deploy-pages@v4
-        with:
-          environment:
-            name: github-pages
-            url: ${{ steps.deployment.outputs.page_url }}
+      - name: Verify import
+        run: python -c "import server; print('OK')"

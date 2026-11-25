@@ -205,7 +205,10 @@ echo "=== 复制到桌面（方便取用）==="
 DESK="${HOME}/Desktop"
 DELIV="$DESK/FARS Dashboard 内测版"
 if [ -d "$DESK" ]; then
-  rm -rf "$DELIV"
+  # ⚠️ 2026-11-25 修：原来 rm -rf "$DELIV" 会**连带删掉**目录里其他物料
+  #    （实测踩过：路演演示视频.mp4 和产品说明计划书.docx 被清掉了）。
+  #    → 改成只删本次要覆盖的两个（.app / .zip），其余文件一律保留。
+  rm -rf "$DELIV/$APP_NAME.app" "$DELIV/$APP_NAME.zip"
   mkdir -p "$DELIV"
   cp -R "$APP" "$DELIV/"
   cp "$DIST/$APP_NAME.zip" "$DELIV/"

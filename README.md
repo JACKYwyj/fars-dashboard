@@ -32,11 +32,25 @@ FARS（Financial Econometrics Fully Automated Research System）把「选题 →
 
 ---
 
+## 在线演示
+
+**https://jackywyj.github.io/fars-dashboard/**
+
+无需安装，浏览器直接打开。包含：
+
+- 核心能力总览（八大模块）
+- **真实运行实例**截图 —— 深色 / 日间双模式、最右栏刘看山工位、右栏参数操作台
+- 论文八段结构说明
+- 技术细节与下载入口
+
+> 演示站为 GitHub Pages 静态站点（随仓库 `docs/` 目录自动部署）。
+> 截图是静态的；要点真东西需本地运行。
+
 ## 安装
 
 ### macOS（推荐）
 
-下载 [Releases](https://github.com/JACKYwyj/fars-dashboard/releases) 里的 `FARS Dashboard.zip`：
+下载 [Releases](https://github.com/JACKYwyj/fars-dashboard/releases/tag/v0.995) 里的 `FARS Dashboard.zip`（v0.995，139MB）：
 
 1. 解压得到 `FARS Dashboard.app`
 2. 双击启动（约 12 秒，onefile 语义需解压运行时）

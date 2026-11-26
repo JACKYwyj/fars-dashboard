@@ -7232,6 +7232,25 @@ function renderInlineElement(kind, id, extra){
   var f = findById(paperState.figures || [], id);
   if (!f) return '<em style="color:var(--ink-4)">[图表 ' + esc(id) + ']</em>';
   var cap = '<div class="cap">' + esc(f.title || f.id) + (extra ? ' · ' + esc(extra) : '') + '</div>';
+  // 位图图件（matplotlib 产出，300dpi PNG + 矢量 PDF）：
+  // kind === "image" 时走 <img>，不走 SVG 渲染器 —— SVG 渲染器只吃 series/categories。
+  if (f.kind === 'image' || (f.chartType || '') === 'image'){
+    var src = f.url || f.src || '';
+    if (!src && f.file){
+      src = '/api/paper_fig/' + encodeURIComponent(paperState.code || '') + '/' +
+            encodeURIComponent(paperState.topic || '') + '/' + encodeURIComponent(f.file);
+    }
+    if (!src){
+      return '<div class="ppart-inline" contenteditable="false" draggable="true" data-kind="FIG" data-id="' +
+        esc(id) + '" data-extra="' + esc(extra || '') + '" title="拖动可移动位置；拖回右栏可移除">' +
+        cap + '<em style="color:var(--ink-4)">[图件缺少可访问路径]</em></div>';
+    }
+    return '<div class="ppart-inline" contenteditable="false" draggable="true" data-kind="FIG" data-id="' +
+      esc(id) + '" data-extra="' + esc(extra || '') + '" title="拖动可移动位置；拖回右栏可移除">' +
+      cap + '<img src="' + esc(src) + '" alt="' + esc(f.title || id) +
+      '" style="max-width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:4px"/>' +
+      '</div>';
+  }
   return '<div class="ppart-inline" contenteditable="false" draggable="true" data-kind="FIG" data-id="' + esc(id) + '" data-extra="' + esc(extra || '') + '" title="拖动可移动位置；拖回右栏可移除">' + cap + renderChartSVG(f) + '</div>';
 }
 
@@ -10125,8 +10144,10 @@ function renderRightPaper(){
         esc(t.title || t.id) + '<span class="k">表</span></span>';
     });
     (paperState.figures || []).forEach(function(f){
-      h += '<span class="asset" draggable="true" data-asset="figure" data-id="' + esc(f.id) + '">📈 ' +
-        esc(f.title || f.id) + '<span class="k">' + esc(f.chartType || 'chart') + '</span></span>';
+      var isImg = (f.kind === 'image') || ((f.chartType || '') === 'image');
+      h += '<span class="asset" draggable="true" data-asset="figure" data-id="' + esc(f.id) + '">' +
+        (isImg ? '🖼 ' : '📈 ') + esc(f.title || f.id) +
+        '<span class="k">' + esc(isImg ? 'image' : (f.chartType || 'chart')) + '</span></span>';
     });
     if (!h) h = '<span style="font-size:10.5px;color:var(--ink-4)">先在下方「建表 / 建图」生成素材</span>';
     al.innerHTML = h;

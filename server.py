@@ -6873,6 +6873,41 @@ class Handler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(blob)
                 return
+            # ---- 论文图件（matplotlib 位图 / 矢量图）----
+            # 目录约定：state/Papers/<CODE>_<Topic>/03_图表/
+            # 正文里的 <<FIG:ext_png_E1>> 若对应 kind="image" 的图件，
+            # 前端用 /api/paper_fig/<code>/<topic>/<文件名> 取图。
+            if path.startswith("/api/paper_fig/"):
+                rel = path[len("/api/paper_fig/"):]
+                if ".." in rel or rel.startswith("/"):
+                    return self._json({"error": "非法路径"}, 400)
+                seg = urllib.parse.unquote(rel).split("/")
+                if len(seg) != 3:
+                    return self._json({"error": "路径应为 <code>/<topic>/<文件名>"}, 400)
+                code_, topic_, fn = seg
+                if not fn or "/" in fn or fn in (".", ".."):
+                    return self._json({"error": "非法文件名"}, 400)
+                ap = os.path.join(paper_folder(code_, topic_), SUB_FIG, fn)
+                if not os.path.isfile(ap):
+                    return self._json({"error": "图件不存在: %s" % fn}, 404)
+                try:
+                    with open(ap, "rb") as f:
+                        blob = f.read()
+                except Exception as e:
+                    return self._json({"error": "读取失败: %s" % e}, 500)
+                ext = os.path.splitext(ap)[1].lower()
+                ctype = {".png": "image/png", ".jpg": "image/jpeg",
+                         ".jpeg": "image/jpeg", ".svg": "image/svg+xml",
+                         ".webp": "image/webp", ".pdf": "application/pdf",
+                         ".gif": "image/gif"}.get(ext, "application/octet-stream")
+                self.send_response(200)
+                self.send_header("Content-Type", ctype)
+                self.send_header("Content-Length", str(len(blob)))
+                self.send_header("Cache-Control", "public, max-age=86400")
+                self.send_header("X-Content-Type-Options", "nosniff")
+                self.end_headers()
+                self.wfile.write(blob)
+                return
             if path == "/api/state":
                 return self._json(collect_state())
             if path == "/api/zhihu/hot":

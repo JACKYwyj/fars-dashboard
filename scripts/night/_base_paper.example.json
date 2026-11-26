@@ -1,0 +1,16 @@
+{
+  "code": "FSI01",
+  "topic": "Stock",
+  "title": "金融压力对可再生能源股票指数波动率影响的实证研究",
+  "farsPaper": "/Users/wangyunjie/.openclaw/workspace/tools/fars-dashboard/state/papers/FSI01__Stock.json",
+  "workDir": "/Users/wangyunjie/.openclaw/workspace/drafts/night-build/2026-11-26/work/work",
+  "dataDir": "/Users/wangyunjie/.openclaw/workspace/drafts/night-build/2026-11-22/work/data",
+  "note": "2026-11-26 上午主人提供澳科大初稿（docx）并导入 FARS。凌晨构建若做这篇论文，必须在初稿基础上继续写。初稿已知问题：5 处作者张冠李戴（Trabelsi→Dias、Zavadska→Dias、Subramaniam→Baghirzade、Soltani→Mar'I、ECB→Chavleishvili）、3 条网页/blog 当学术引用、正文引 Sims (1980) 但参考文献表无此条、数据来源声称 Bloomberg 但底层是 EViews 工作簿。",
+  "verifyTools": {
+    "refs": "tools/fars-dashboard/verify_draft_refs.py",
+    "data": "tools/fars-dashboard/fars_data.py",
+    "numbers": "tools/night/paper_verify/verify_table_numbers.py",
+    "prose": "tools/night/paper_verify/verify_prose_claims.py"
+  },
+  "establishedAt": "2026-11-26T10:20:00+08:00"
+}

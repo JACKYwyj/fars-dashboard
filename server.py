@@ -239,6 +239,21 @@ def ro(path):
         return ""
 
 
+# ============================================================
+# FARS 数据与文献获取层（2026-11-26 新增）
+# ------------------------------------------------------------
+# · FRED（免 key）—— 宏观/金融序列，可直接喂回归
+# · Crossref —— 引用 DOI 级权威核验
+# · OpenAlex —— 文献检索 + 被引数 + 开放获取 PDF 链接
+# · arXiv —— 预印本
+# 设计原则见 fars_data.py 顶部：一切标 source，失败如实报错，不编造。
+# ============================================================
+try:
+    import fars_data as _fdata
+except Exception:                     # 打包环境路径问题 → 降级但不崩
+    _fdata = None
+
+
 def load_json(path, default):
     try:
         return json.loads(ro(path))
@@ -8143,6 +8158,61 @@ class Handler(BaseHTTPRequestHandler):
                     ar = run_audit(d, spec)
                     save_paper(d)
                     return self._json({"ok": True, "audit": ar, "paper": d})
+
+            if path == "/api/data/fred":
+                # GET 风格但走 POST 统一入口：body = {series:[...], start, end}
+                if not _fdata:
+                    return self._json({"ok": False, "error": "fars_data 模块不可用"}, 200)
+                ids = body.get("series") or []
+                if isinstance(ids, str):
+                    ids = [ids]
+                if not ids:
+                    return self._json({"ok": False,
+                                       "error": "缺 series（例：CPIAUCSL / SP500 / NFCI）"}, 200)
+                res = _fdata.fred_fetch_many(ids, body.get("start") or "1990-01-01",
+                                             body.get("end") or "2030-12-31")
+                return self._json(res, 200)
+
+            if path == "/api/lit/verify":
+                # 参考文献表 → Crossref 权威核验
+                if not _fdata:
+                    return self._json({"ok": False, "error": "fars_data 模块不可用"}, 200)
+                refs = body.get("refs") or []
+                if not refs:
+                    return self._json({"ok": False, "error": "缺 refs"}, 200)
+                res = _fdata.verify_reference_list(refs)
+                if body.get("want_md"):
+                    res["markdown"] = _fdata.md_report(res)
+                return self._json(res, 200)
+
+            if path == "/api/lit/search":
+                # 文献检索：OpenAlex + arXiv 并行
+                if not _fdata:
+                    return self._json({"ok": False, "error": "fars_data 模块不可用"}, 200)
+                q = (body.get("query") or "").strip()
+                if not q:
+                    return self._json({"ok": False, "error": "缺 query"}, 200)
+                out = {"ok": True, "query": q}
+                out["openalex"] = _fdata.openalex_search(
+                    q, per_page=int(body.get("per_page") or 8),
+                    year_from=body.get("year_from"), year_to=body.get("year_to"))
+                if body.get("arxiv"):
+                    out["arxiv"] = _fdata.arxiv_search(
+                        body.get("arxiv_query") or ("all:" + q.replace(" ", " AND all:")),
+                        max_results=int(body.get("per_page") or 6))
+                return self._json(out, 200)
+
+            if path == "/api/data/catalog":
+                # 可用序列/检索器清单（前端下拉用）
+                if not _fdata:
+                    return self._json({"ok": False, "error": "fars_data 模块不可用"}, 200)
+                return self._json({"ok": True,
+                                   "fred": _fdata.FRED_SERIES,
+                                   "fred_market": _fdata.FRED_MARKET,
+                                   "sources": ["FRED", "Crossref", "OpenAlex", "arXiv"],
+                                   "yahoo": {"ok": False,
+                                             "note": "Yahoo 现需 cookie+crumb，匿名不可用；"
+                                                     "市场序列建议走 FRED"}}, 200)
 
             if path == "/api/ksn/advise":
                 code = body.get("code")
